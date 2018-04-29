@@ -18,7 +18,6 @@ import StaticRouter from 'react-router-dom/StaticRouter'
 import { SheetsRegistry } from 'react-jss/lib/jss'
 import JssProvider from 'react-jss/lib/JssProvider'
 import { MuiThemeProvider, createMuiTheme, createGenerateClassName } from 'material-ui/styles'
-import { indigo, pink } from 'material-ui/colors'
 //end
 
 //comment out before building for production
@@ -51,21 +50,21 @@ app.get('*', (req, res) => {
    const theme = createMuiTheme({
      palette: {
        primary: {
-       light: '#757de8',
-       main: '#3f51b5',
-       dark: '#002984',
-       contrastText: '#fff',
-     },
-     secondary: {
-       light: '#ff79b0',
-       main: '#ff4081',
-       dark: '#c60055',
-       contrastText: '#000',
-     },
-       openTitle: indigo['400'],
-       protectedTitle: pink['400'],
+         light: '#484848',
+         main: '#212121',
+         dark: '#000000',
+         contrastText: '#fff',
+       },
+       secondary: {
+         light: '#ffff6e',
+         main: '#cddc39',
+         dark: '#99aa00',
+         contrastText: '#000',
+       },
+       openTitle: '#484848',
+       protectedTitle: '#7da453',
        type: 'light'
-     },
+     }
    })
    const generateClassName = createGenerateClassName()
    const context = {}
