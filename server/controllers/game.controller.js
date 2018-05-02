@@ -54,10 +54,49 @@ const read = (req, res) => {
   return res.json(req.game)
 }
 
+const update = (req, res) => {
+  let game = req.game
+  game = _.extend(game, req.body)
+  game.updated = Date.now()
+  game.save((err) => {
+    if (err) {
+      return res.status(400).send({
+        error: errorHandler.getErrorMessage(err)
+      })
+    }
+    res.json(game)
+  })
+}
+
+const remove = (req, res) => {
+  let game = req.game
+  game.remove((err, deletedGame) => {
+    if (err) {
+      return res.status(400).json({
+        error: errorHandler.getErrorMessage(err)
+      })
+    }
+    res.json(deletedGame)
+  })
+}
+
+const isMaker = (req, res) => {
+  let isMaker = req.game && req.auth && req.game.maker._id == req.auth._id
+  if(!isMaker){
+    return res.status('403').json({
+      error: "User is not authorized"
+    })
+  }
+  next()
+}
+
 export default {
   create,
   list,
   listByMaker,
   gameByID,
-  read
+  read,
+  update,
+  remove,
+  isMaker
 }

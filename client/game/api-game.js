@@ -42,9 +42,42 @@ const read = (params, credentials) => {
   }).catch((err) => console.log(err))
 }
 
+const update = (params, credentials, game) => {
+  return fetch('/api/games/' + params.gameId, {
+    method: 'PUT',
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + credentials.t
+    },
+    body: JSON.stringify(game)
+  }).then((response) => {
+    return response.json()
+  }).catch((err) => {
+    console.log(err)
+  })
+}
+
+const remove = (params, credentials) => {
+  return fetch('/api/games/' + params.gameId, {
+    method: 'DELETE',
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + credentials.t
+    }
+  }).then((response) => {
+    return response.json()
+  }).catch((err) => {
+    console.log(err)
+  })
+}
+
 export {
   create,
   list,
   listByMaker,
-  read
+  read,
+  update,
+  remove
 }
