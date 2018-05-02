@@ -17,7 +17,10 @@ router.route('/api/game/:gameId')
 
 router.route('/api/games/:gameId')
   .put(authCtrl.requireSignin, gameCtrl.isMaker, gameCtrl.update)
-  .delete(authCtrl.requireSignin, gameCtrl.isMaker, gameCtrl.remove)  
+  .delete(authCtrl.requireSignin, gameCtrl.isMaker, gameCtrl.remove)
+
+router.route('/game/play')
+  .get(gameCtrl.playGame)
 
 router.param('gameId', gameCtrl.gameByID)
 router.param('userId', userCtrl.userByID)

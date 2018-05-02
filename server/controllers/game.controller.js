@@ -90,6 +90,10 @@ const isMaker = (req, res, next) => {
   next()
 }
 
+const playGame = (req, res) => {
+  res.sendFile(process.cwd()+'/server/vr/index.html')
+}
+
 export default {
   create,
   list,
@@ -98,5 +102,6 @@ export default {
   read,
   update,
   remove,
-  isMaker
+  isMaker,
+  playGame
 }
