@@ -14,6 +14,8 @@ import DeleteUser from './DeleteUser'
 import auth from './../auth/auth-helper'
 import {read} from './api-user.js'
 import {Redirect, Link} from 'react-router-dom'
+import {listByMaker} from '../game/api-game.js'
+import GameDetail from '../game/GameDetail'
 
 const styles = theme => ({
   root: theme.mixins.gutters({
@@ -33,7 +35,8 @@ class Profile extends Component {
     super()
     this.state = {
       user: '',
-      redirectToSignin: false
+      redirectToSignin: false,
+      games: []
     }
     this.match = match
   }
@@ -46,6 +49,13 @@ class Profile extends Component {
         this.setState({redirectToSignin: true})
       } else {
         this.setState({user: data})
+        listByMaker({userId: data._id}).then((data) => {
+          if (data.error) {
+            console.log(data.error)
+          } else {
+            this.setState({games: data})
+          }
+        })
       }
     })
   }
@@ -54,6 +64,12 @@ class Profile extends Component {
   }
   componentDidMount = () => {
     this.init(this.match.params.userId)
+  }
+  updateGames = (game) => {
+    const updatedGames = this.state.games
+    const index = updatedGames.indexOf(game)
+    updatedGames.splice(index, 1)
+    this.setState({games: updatedGames})
   }
   render() {
     const {classes} = this.props
@@ -74,7 +90,7 @@ class Profile extends Component {
               </Avatar>
             </ListItemAvatar>
             <ListItemText primary={this.state.user.name} secondary={this.state.user.email}/> {
-             auth.isAuthenticated().user && auth.isAuthenticated().user._id == this.state.user._id && 
+             auth.isAuthenticated().user && auth.isAuthenticated().user._id == this.state.user._id &&
               (<ListItemSecondaryAction>
                 <Link to={"/user/edit/" + this.state.user._id}>
                   <IconButton aria-label="Edit" color="primary">
@@ -91,6 +107,15 @@ class Profile extends Component {
               new Date(this.state.user.created)).toDateString()}/>
           </ListItem>
         </List>
+        { this.state.user && this.state.games.length > 0
+          && (<Typography type="subheading" className={classes.subheading}>
+                {this.state.user.name.split(' ')[0] +"'s"} Games
+              </Typography>)
+        }
+        { this.state.games.map((game, i) => {
+                return <GameDetail key={i} game={game} updateGames={this.updateGames}/>
+              })
+        }
       </Paper>
     )
   }
