@@ -5,8 +5,12 @@ import gameCtrl from '../controllers/game.controller'
 
 const router = express.Router()
 
+router.route('/api/games')
+  .get(gameCtrl.list)
+
 router.route('/api/games/by/:userId')
   .post(authCtrl.requireSignin, authCtrl.hasAuthorization, gameCtrl.create)
+  .get(gameCtrl.listByMaker)
 
 router.param('userId', userCtrl.userByID)
 

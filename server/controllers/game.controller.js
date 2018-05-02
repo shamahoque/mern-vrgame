@@ -16,6 +16,31 @@ const create = (req, res, next) => {
   })
 }
 
+const list = (req, res) => {
+  Game.find({}).populate('maker', '_id name').sort('-created').exec((err, games) => {
+    if (err) {
+      return res.status(400).json({
+        error: errorHandler.getErrorMessage(err)
+      })
+    }
+    res.json(games)
+
+  })
+}
+
+const listByMaker = (req, res) => {
+  Game.find({maker: req.profile._id}, (err, games) => {
+    if (err) {
+      return res.status(400).json({
+        error: errorHandler.getErrorMessage(err)
+      })
+    }
+    res.json(games)
+  }).populate('maker', '_id name')
+}
+
 export default {
-  create
+  create,
+  list,
+  listByMaker
 }

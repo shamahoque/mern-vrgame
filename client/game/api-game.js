@@ -13,6 +13,29 @@ const create = (params, credentials, game) => {
     }).catch((err) => console.log(err))
 }
 
+const list = () => {
+  return fetch('/api/games', {
+    method: 'GET',
+  }).then(response => {
+    return response.json()
+  }).catch((err) => console.log(err))
+}
+
+const listByMaker = (params) => {
+  return fetch('/api/games/by/'+params.userId, {
+    method: 'GET',
+    headers: {
+      'Accept': 'application/json'
+    }
+  }).then((response) => {
+    return response.json()
+  }).catch((err) => {
+    console.log(err)
+  })
+}
+
 export {
-  create
+  create,
+  list,
+  listByMaker
 }
