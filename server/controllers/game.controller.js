@@ -80,7 +80,7 @@ const remove = (req, res) => {
   })
 }
 
-const isMaker = (req, res) => {
+const isMaker = (req, res, next) => {
   let isMaker = req.game && req.auth && req.game.maker._id == req.auth._id
   if(!isMaker){
     return res.status('403').json({
