@@ -6,6 +6,7 @@ import Typography from 'material-ui/Typography'
 import {Link} from 'react-router-dom'
 import Button from 'material-ui/Button'
 import auth from './../auth/auth-helper'
+import DeleteGame from './DeleteGame'
 
 const styles = theme => ({
   card: {
@@ -93,6 +94,7 @@ class GameDetail extends Component {
                   Edit
                 </Button>
               </Link>
+              <DeleteGame game={this.props.game} removeGame={this.props.updateGames}/>
             </div>)
       }
     </Card>)
