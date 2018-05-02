@@ -39,8 +39,25 @@ const listByMaker = (req, res) => {
   }).populate('maker', '_id name')
 }
 
+const gameByID = (req, res, next, id) => {
+  Game.findById(id).populate('maker', '_id name').exec((err, game) => {
+    if (err || !game)
+      return res.status('400').json({
+        error: "Game not found"
+      })
+    req.game = game
+    next()
+  })
+}
+
+const read = (req, res) => {
+  return res.json(req.game)
+}
+
 export default {
   create,
   list,
-  listByMaker
+  listByMaker,
+  gameByID,
+  read
 }

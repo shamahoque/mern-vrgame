@@ -12,6 +12,10 @@ router.route('/api/games/by/:userId')
   .post(authCtrl.requireSignin, authCtrl.hasAuthorization, gameCtrl.create)
   .get(gameCtrl.listByMaker)
 
+router.route('/api/game/:gameId')
+  .get(gameCtrl.read)
+
+router.param('gameId', gameCtrl.gameByID)
 router.param('userId', userCtrl.userByID)
 
 export default router
