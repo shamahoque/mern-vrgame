@@ -160,7 +160,8 @@ class GameForm extends Component {
 GameForm.propTypes = {
   classes: PropTypes.object.isRequired,
   onSubmit: PropTypes.func.isRequired,
-  errorMsg: PropTypes.string.isRequired
+  errorMsg: PropTypes.string,
+  gameId: PropTypes.string
 }
 
 export default withStyles(styles)(GameForm)
