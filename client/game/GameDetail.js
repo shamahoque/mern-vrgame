@@ -70,8 +70,7 @@ class GameDetail extends Component {
       <CardMedia className={classes.media} image={this.props.game.world} title={this.props.game.name}/>
       <div className={classes.heading}>
         <Typography type="subheading" component="h4" className={classes.maker}>
-          <em>by</em>
-          {this.props.game.maker.name}
+          <em>by </em> {this.props.game.maker.name}
         </Typography>
       </div>
       <CardContent className={classes.clue}>
