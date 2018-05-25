@@ -20,7 +20,8 @@ A web-based game application with VR features - developed using React, React 360
 4. Open [localhost:3000](http://localhost:3000/) in the browser
 
 ### React 360
-The VR game is developed using React 360, and integrated into this application.
+The VR game is developed using React 360 and integrated into this application.
+
 The React 360 code for the game is [available here](https://github.com/shamahoque/MERNVR).
 
 ---- 
