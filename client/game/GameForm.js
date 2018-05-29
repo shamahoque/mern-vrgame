@@ -115,7 +115,7 @@ class GameForm extends Component {
             <ExpansionPanelDetails className={classes.objectDetails}>
               {
                 this.state.game.answerObjects.map((item, i) => {
-                  return <div key={i}>
+                  return <div key={item._id}>
                     <VRObjectForm handleUpdate={this.handleObjectChange} index={i} type={'answerObjects'} vrObject={item} removeObject={this.removeObject}/>
                   </div>
                 })
