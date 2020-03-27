@@ -1,15 +1,17 @@
-import React, {Component} from 'react'
-import PropTypes from 'prop-types'
-import {withStyles} from 'material-ui/styles'
-import Paper from 'material-ui/Paper'
-import List, {ListItem, ListItemAvatar, ListItemSecondaryAction, ListItemText} from 'material-ui/List'
-import Avatar from 'material-ui/Avatar'
-import IconButton from 'material-ui/IconButton'
-import Button from 'material-ui/Button'
-import Typography from 'material-ui/Typography'
-import Edit from 'material-ui-icons/Edit'
-import Person from 'material-ui-icons/Person'
-import Divider from 'material-ui/Divider'
+import React, { useState, useEffect } from 'react'
+import { makeStyles } from '@material-ui/core/styles'
+import Paper from '@material-ui/core/Paper'
+import List from '@material-ui/core/List'
+import ListItem from '@material-ui/core/ListItem'
+import ListItemAvatar from '@material-ui/core/ListItemAvatar'
+import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction'
+import ListItemText from '@material-ui/core/ListItemText'
+import Avatar from '@material-ui/core/Avatar'
+import IconButton from '@material-ui/core/IconButton'
+import Typography from '@material-ui/core/Typography'
+import Edit from '@material-ui/icons/Edit'
+import Person from '@material-ui/icons/Person'
+import Divider from '@material-ui/core/Divider'
 import DeleteUser from './DeleteUser'
 import auth from './../auth/auth-helper'
 import {read} from './api-user.js'
@@ -17,69 +19,79 @@ import {Redirect, Link} from 'react-router-dom'
 import {listByMaker} from '../game/api-game.js'
 import GameDetail from '../game/GameDetail'
 
-const styles = theme => ({
+const useStyles = makeStyles(theme => ({
   root: theme.mixins.gutters({
     maxWidth: 600,
     margin: 'auto',
-    padding: theme.spacing.unit * 3,
-    marginTop: theme.spacing.unit * 5
+    padding: theme.spacing(3),
+    marginTop: theme.spacing(5)
   }),
   title: {
-    margin: `${theme.spacing.unit * 3}px 0 ${theme.spacing.unit * 2}px`,
+    margin: `${theme.spacing(3)}px 0 ${theme.spacing(2)}px`,
     color: theme.palette.protectedTitle
   }
-})
+}))
 
-class Profile extends Component {
-  constructor({match}) {
-    super()
-    this.state = {
-      user: '',
-      redirectToSignin: false,
-      games: []
-    }
-    this.match = match
-  }
-  init = (userId) => {
-    const jwt = auth.isAuthenticated()
+export default function Profile({ match }) {
+  const classes = useStyles()
+  const [user, setUser] = useState({})
+  const [games, setGames] = useState([])
+  const [redirectToSignin, setRedirectToSignin] = useState(false)
+  const jwt = auth.isAuthenticated()
+
+  useEffect(() => {
+    const abortController = new AbortController()
+    const signal = abortController.signal
+
     read({
-      userId: userId
-    }, {t: jwt.token}).then((data) => {
-      if (data.error) {
-        this.setState({redirectToSignin: true})
+      userId: match.params.userId
+    }, {t: jwt.token}, signal).then((data) => {
+      if (data && data.error) {
+        setRedirectToSignin(true)
       } else {
-        this.setState({user: data})
-        listByMaker({userId: data._id}).then((data) => {
-          if (data.error) {
-            console.log(data.error)
-          } else {
-            this.setState({games: data})
-          }
-        })
+        setUser(data)
       }
     })
-  }
-  componentWillReceiveProps = (props) => {
-    this.init(props.match.params.userId)
-  }
-  componentDidMount = () => {
-    this.init(this.match.params.userId)
-  }
-  updateGames = (game) => {
-    const updatedGames = this.state.games
+
+    return function cleanup(){
+      abortController.abort()
+    }
+
+  }, [match.params.userId])
+  
+
+  useEffect(() => {
+    const abortController = new AbortController()
+    const signal = abortController.signal
+
+    listByMaker({userId: match.params.userId}, signal).then((data) => {
+      if (data.error) {
+        console.log(data.error)
+      } else {
+        setGames(data)
+      }
+    })
+    return function cleanup(){
+      abortController.abort()
+    }
+
+  }, [match.params.userId])
+
+
+  const updateGames = (game) => {
+    const updatedGames = [...games]
     const index = updatedGames.indexOf(game)
     updatedGames.splice(index, 1)
-    this.setState({games: updatedGames})
+    useGames(updatedGames)
   }
-  render() {
-    const {classes} = this.props
-    const redirectToSignin = this.state.redirectToSignin
-    if (redirectToSignin) {
-      return <Redirect to='/signin'/>
-    }
+
+  if (redirectToSignin) {
+    return <Redirect to='/signin'/>
+  }
+
     return (
       <Paper className={classes.root} elevation={4}>
-        <Typography type="title" className={classes.title}>
+        <Typography variant="h6" className={classes.title}>
           Profile
         </Typography>
         <List dense>
@@ -89,39 +101,34 @@ class Profile extends Component {
                 <Person/>
               </Avatar>
             </ListItemAvatar>
-            <ListItemText primary={this.state.user.name} secondary={this.state.user.email}/> {
-             auth.isAuthenticated().user && auth.isAuthenticated().user._id == this.state.user._id &&
+            <ListItemText primary={user.name} secondary={user.email}/> {
+             auth.isAuthenticated().user && auth.isAuthenticated().user._id == user._id &&
               (<ListItemSecondaryAction>
-                <Link to={"/user/edit/" + this.state.user._id}>
+                <Link to={"/user/edit/" + user._id}>
                   <IconButton aria-label="Edit" color="primary">
                     <Edit/>
                   </IconButton>
                 </Link>
-                <DeleteUser userId={this.state.user._id}/>
+                <DeleteUser userId={user._id}/>
               </ListItemSecondaryAction>)
             }
           </ListItem>
           <Divider/>
           <ListItem>
             <ListItemText primary={"Joined: " + (
-              new Date(this.state.user.created)).toDateString()}/>
+              new Date(user.created)).toDateString()}/>
           </ListItem>
         </List>
-        { this.state.user && this.state.games.length > 0
+        { user && games.length > 0
           && (<Typography type="subheading" className={classes.subheading}>
-                {this.state.user.name.split(' ')[0] +"'s"} Games
+                {user.name.split(' ')[0] +"'s"} Games
               </Typography>)
         }
-        { this.state.games.map((game, i) => {
-                return <GameDetail key={i} game={game} updateGames={this.updateGames}/>
+        { games.map((game, i) => {
+                return <GameDetail key={i} game={game} updateGames={updateGames}/>
               })
         }
       </Paper>
     )
-  }
-}
-Profile.propTypes = {
-  classes: PropTypes.object.isRequired
 }
 
-export default withStyles(styles)(Profile)

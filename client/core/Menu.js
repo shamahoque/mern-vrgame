@@ -1,11 +1,11 @@
 import React from 'react'
-import AppBar from 'material-ui/AppBar'
-import Toolbar from 'material-ui/Toolbar'
-import Typography from 'material-ui/Typography'
-import IconButton from 'material-ui/IconButton'
-import HomeIcon from 'material-ui-icons/Home'
-import AddBoxIcon from 'material-ui-icons/AddBox'
-import Button from 'material-ui/Button'
+import AppBar from '@material-ui/core/AppBar'
+import Toolbar from '@material-ui/core/Toolbar'
+import Typography from '@material-ui/core/Typography'
+import IconButton from '@material-ui/core/IconButton'
+import HomeIcon from '@material-ui/icons/Home'
+import AddBoxIcon from '@material-ui/icons/AddBoxRounded'
+import Button from '@material-ui/core/Button'
 import auth from './../auth/auth-helper'
 import {Link, withRouter} from 'react-router-dom'
 
@@ -52,7 +52,7 @@ const Menu = withRouter(({history}) => (
               <Button style={isActive(history, "/user/" + auth.isAuthenticated().user._id)}>My Profile</Button>
             </Link>
             <Button color="inherit" onClick={() => {
-                auth.signout(() => history.push('/'))
+                auth.clearJWT(() => history.push('/'))
               }}>Sign out</Button>
           </span>)
         }

@@ -1,17 +1,19 @@
-import React, {Component} from 'react'
+import React from 'react'
 import PropTypes from 'prop-types'
-import {withStyles} from 'material-ui/styles'
-import Card, {CardContent, CardMedia} from 'material-ui/Card'
-import Typography from 'material-ui/Typography'
+import { makeStyles } from '@material-ui/core/styles'
+import Card from '@material-ui/core/Card'
+import CardMedia from '@material-ui/core/CardMedia'
+import CardContent from '@material-ui/core/CardContent'
+import Typography from '@material-ui/core/Typography'
 import {Link} from 'react-router-dom'
-import Button from 'material-ui/Button'
+import Button from '@material-ui/core/Button'
 import auth from './../auth/auth-helper'
 import DeleteGame from './DeleteGame'
 
-const styles = theme => ({
+const useStyles = makeStyles(theme => ({
   card: {
     width: 600,
-    margin: theme.spacing.unit * 2,
+    margin: theme.spacing(2),
     display: 'inline-table',
     textAlign: 'center'
   },
@@ -57,53 +59,51 @@ const styles = theme => ({
     padding: '7px',
     backgroundColor: '#e8eae3'
   }
-})
-class GameDetail extends Component {
-  render() {
-    const {classes} = this.props
+}))
+export default function GameDetail(props) {
+  const classes = useStyles()
     return (<Card className={classes.card}>
       <div className={classes.heading}>
         <Typography type="headline" component="h2" className={classes.title}>
-          {this.props.game.name}
+          {props.game.name}
         </Typography>
       </div>
-      <CardMedia className={classes.media} image={this.props.game.world} title={this.props.game.name}/>
+      <CardMedia className={classes.media} image={props.game.world} title={props.game.name}/>
       <div className={classes.heading}>
         <Typography type="subheading" component="h4" className={classes.maker}>
           <em>by</em>
-          {this.props.game.maker.name}
+          {props.game.maker.name}
         </Typography>
       </div>
       <CardContent className={classes.clue}>
         <Typography type="body1" component="p">
-          {this.props.game.clue}
+          {props.game.clue}
         </Typography>
       </CardContent>
       <div className={classes.action}>
-        <Link to={"/game/play?id=" + this.props.game._id} target='_self'>
-          <Button variant="raised" color="secondary" className={classes.button}>
+        <a href={"/game/play?id=" + props.game._id} target='_self'>
+          <Button variant="contained" color="secondary" className={classes.button}>
             Play Game
           </Button>
-        </Link>
+        </a>
       </div>
       {
-        auth.isAuthenticated().user && auth.isAuthenticated().user._id == this.props.game.maker._id
+        auth.isAuthenticated().user && auth.isAuthenticated().user._id == props.game.maker._id
         && (<div>
-              <Link to={"/game/edit/" + this.props.game._id}>
-                <Button variant="raised" color="primary" className={classes.editbutton}>
+              <Link to={"/game/edit/" + props.game._id}>
+                <Button variant="contained" color="primary" className={classes.editbutton}>
                   Edit
                 </Button>
               </Link>
-              <DeleteGame game={this.props.game} removeGame={this.props.updateGames}/>
+              <DeleteGame game={props.game} removeGame={props.updateGames}/>
             </div>)
       }
     </Card>)
-  }
+
 }
 GameDetail.propTypes = {
-  classes: PropTypes.object.isRequired,
   game: PropTypes.object.isRequired,
   updateGames: PropTypes.func.isRequired
 }
 
-export default withStyles(styles)(GameDetail)
+

@@ -1,31 +1,32 @@
-import React, {Component} from 'react'
-import Card from 'material-ui/Card'
-import Button from 'material-ui/Button'
-import TextField from 'material-ui/TextField'
-import Icon from 'material-ui/Icon'
+import React, {useEffect, useState} from 'react'
+import Card from '@material-ui/core/Card'
+import Button from '@material-ui/core/Button'
+import TextField from '@material-ui/core/TextField'
+import Icon from '@material-ui/core/Icon'
 import PropTypes from 'prop-types'
-import {withStyles} from 'material-ui/styles'
+import { makeStyles } from '@material-ui/core/styles'
 
-const styles = theme => ({
+const useStyles = makeStyles(theme => ({
   card: {
     marginRight:'12px',
     marginLeft: '12px',
     padding: '10px'
   },
   textField: {
-    marginLeft: theme.spacing.unit,
-    marginRight: theme.spacing.unit,
+    marginLeft: theme.spacing(1),
+    marginRight: theme.spacing(1),
     width: 300
   },
   numberField: {
-    marginLeft: theme.spacing.unit,
-    marginRight: theme.spacing.unit,
+    marginLeft: theme.spacing(1),
+    marginRight: theme.spacing(1),
     width: 70
   }
-})
+}))
 
-class VRObjectForm extends Component {
-  state = {
+export default function VRObjectForm(props) {
+  const classes = useStyles()
+  const [values, setValues] = useState({
     objUrl: '',
     mtlUrl: '',
     translateX: 0,
@@ -36,11 +37,11 @@ class VRObjectForm extends Component {
     rotateZ: 0,
     scale: 1,
     color:'white'
-  }
-  componentDidMount = () => {
-    if(this.props.vrObject && Object.keys(this.props.vrObject).length != 0){
-      const vrObject = this.props.vrObject
-      this.setState({
+  })
+  useEffect(() => {
+    if(props.vrObject && Object.keys(props.vrObject).length != 0){
+      const vrObject = props.vrObject
+      setValues({...values,
         objUrl: vrObject.objUrl,
         mtlUrl: vrObject.mtlUrl,
         translateX: Number(vrObject.translateX),
@@ -53,107 +54,101 @@ class VRObjectForm extends Component {
         color:vrObject.color
       })
     }
+  }, [])
+  const handleChange = name => event => {
+    setValues({...values, [name]: event.target.value})
+    props.handleUpdate(props.index, props.type, name, event.target.value)
   }
-  handleChange = name => event => {
-    this.setState({[name]: event.target.value})
-    this.props.handleUpdate(this.props.index, this.props.type, name, event.target.value)
-  }
-  render() {
-    const {classes} = this.props
     return (
       <Card className={classes.card}>
         <TextField
-          id="obj"
           label=".obj url"
-          value={this.state.objUrl}
-          onChange={this.handleChange('objUrl')}
+          value={values.objUrl}
+          onChange={handleChange('objUrl')}
           className={classes.textField}
           margin="normal"
         /><br/>
         <TextField
-          id="mtl"
           label=".mtl url"
-          value={this.state.mtlUrl}
-          onChange={this.handleChange('mtlUrl')}
+          value={values.mtlUrl}
+          onChange={handleChange('mtlUrl')}
           className={classes.textField}
           margin="normal"
         /><br/>
         <TextField
-          value={this.state.translateX}
+          value={values.translateX}
           label="TranslateX"
-          onChange={this.handleChange('translateX')}
+          onChange={handleChange('translateX')}
           type="number"
           className={classes.numberField}
           margin="normal"
         />
         <TextField
-          value={this.state.translateY}
+          value={values.translateY}
           label="TranslateY"
-          onChange={this.handleChange( 'translateY')}
+          onChange={handleChange( 'translateY')}
           type="number"
           className={classes.numberField}
           margin="normal"
         />
         <TextField
-          value={this.state.translateZ}
+          value={values.translateZ}
           label="TranslateZ"
-          onChange={this.handleChange('translateZ')}
+          onChange={handleChange('translateZ')}
           type="number"
           className={classes.numberField}
           margin="normal"
         /><br/>
         <TextField
-          value={this.state.rotateX}
+          value={values.rotateX}
           label="RotateX"
-          onChange={this.handleChange('rotateX')}
+          onChange={handleChange('rotateX')}
           type="number"
           className={classes.numberField}
           margin="normal"
         />
         <TextField
-          value={this.state.rotateY}
+          value={values.rotateY}
           label="RotateY"
-          onChange={this.handleChange('rotateY')}
+          onChange={handleChange('rotateY')}
           type="number"
           className={classes.numberField}
           margin="normal"
         />
         <TextField
-          value={this.state.rotateZ}
+          value={values.rotateZ}
           label="RotateZ"
-          onChange={this.handleChange('rotateZ')}
+          onChange={handleChange('rotateZ')}
           type="number"
           className={classes.numberField}
           margin="normal"
         /><br/>
         <TextField
-          value={this.state.scale}
+          value={values.scale}
           label="Scale"
-          onChange={this.handleChange('scale')}
+          onChange={handleChange('scale')}
           type="number"
           className={classes.numberField}
           margin="normal"
         />
         <TextField
-          value={this.state.color}
+          value={values.color}
           label="Color"
-          onChange={this.handleChange('color')}
+          onChange={handleChange('color')}
           className={classes.numberField}
           margin="normal"
         />
-        <Button onClick={this.props.removeObject(this.props.type, this.props.index)}>
+        <Button onClick={props.removeObject(props.type, props.index)}>
           <Icon style={{marginRight: '5px'}}>cancel</Icon> Delete
         </Button><br/>
-     </Card>)
-  }
+     </Card>
+     )
 }
 
 VRObjectForm.propTypes = {
-  classes: PropTypes.object.isRequired,
   index: PropTypes.number.isRequired,
   vrObject: PropTypes.object.isRequired,
   handleUpdate: PropTypes.func.isRequired,
   removeObject: PropTypes.func.isRequired
 }
 
-export default withStyles(styles)(VRObjectForm)

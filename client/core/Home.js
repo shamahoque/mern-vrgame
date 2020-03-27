@@ -1,50 +1,45 @@
-import React, {Component} from 'react'
-import PropTypes from 'prop-types'
-import {withStyles} from 'material-ui/styles'
-import Card, {CardContent, CardMedia} from 'material-ui/Card'
+import React, {useState, useEffect} from 'react'
+import { makeStyles } from '@material-ui/core/styles'
 import {list} from '../game/api-game.js'
 import GameDetail from '../game/GameDetail'
 
-const styles = theme => ({
+const useStyles = makeStyles(theme => ({
   root: {
     flexGrow: 1,
     margin: '10px 24px',
   }
-})
+}))
 
-class Home extends Component {
-  state={
-    games: []
-  }
-  componentDidMount = () => {
-    list().then((data) => {
+export default function Home(){
+  const classes = useStyles()
+  const [games, setGames] = useState([])
+  useEffect(() => {
+    const abortController = new AbortController()
+    const signal = abortController.signal
+
+    list(signal).then((data) => {
       if (data.error) {
         console.log(data.error)
       } else {
-        this.setState({games: data})
+        setGames(data)
       }
     })
-  }
-  updateGames = (game) => {
-    const updatedGames = this.state.games
+    return function cleanup(){
+      abortController.abort()
+    }
+  }, [])
+
+  const updateGames = (game) => {
+    const updatedGames = [...games]
     const index = updatedGames.indexOf(game)
     updatedGames.splice(index, 1)
-    this.setState({games: updatedGames})
+    setGames(updatedGames)
   }
-  render() {
-    const {classes} = this.props
     return (
       <div className={classes.root}>
-        {this.state.games.map((game, i) => {
-          return <GameDetail key={i} game={game} updateGames={this.updateGames}/>
+        {games.map((game, i) => {
+          return <GameDetail key={i} game={game} updateGames={updateGames}/>
         })}
       </div>
     )
-  }
 }
-
-Home.propTypes = {
-  classes: PropTypes.object.isRequired
-}
-
-export default withStyles(styles)(Home)

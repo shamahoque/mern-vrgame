@@ -1,4 +1,4 @@
-import React, {Component} from 'react'
+import React from 'react'
 import {Route, Switch} from 'react-router-dom'
 import Home from './core/Home'
 import Users from './user/Users'
@@ -11,17 +11,8 @@ import Menu from './core/Menu'
 import NewGame from './game/NewGame'
 import EditGame from './game/EditGame'
 
-class MainRouter extends Component {
-  // Removes the server-side injected CSS when React component mounts
-  componentDidMount() {
-    const jssStyles = document.getElementById('jss-server-side')
-    if (jssStyles && jssStyles.parentNode) {
-      jssStyles.parentNode.removeChild(jssStyles)
-    }
-  }
-
-  render() {
-    return (<div>
+const MainRouter = () => {
+  return (<div>
       <Menu/>
       <Switch>
         <Route exact path="/" component={Home}/>
@@ -34,8 +25,7 @@ class MainRouter extends Component {
         <PrivateRoute path="/game/new" component={NewGame}/>
         <PrivateRoute path="/game/edit/:gameId" component={EditGame}/>
       </Switch>
-    </div>)
-  }
+      </div>)
 }
 
 export default MainRouter

@@ -1,44 +1,35 @@
-import React, {Component} from 'react'
+import React, {useState} from 'react'
 import auth from './../auth/auth-helper'
-import PropTypes from 'prop-types'
 import {update} from './api-game.js'
 import {Redirect} from 'react-router-dom'
 import GameForm from './GameForm'
 
-class EditGame extends Component {
-  constructor({match}) {
-    super()
-    this.state = {
-      redirect: false,
-      error: '',
-    }
-      this.match = match
-  }
+export default function EditGame({ match }) {
+  const [redirect, setRedirect] = useState(false)
+  const [error, setError]= useState('')
 
-  clickSubmit = game => event => {
+  const clickSubmit = game => event => {
     const jwt = auth.isAuthenticated()
     update({
-      gameId: this.match.params.gameId
+      gameId: match.params.gameId
     }, {
       t: jwt.token
     }, game).then((data) => {
       if (data.error) {
-        this.setState({error: data.error})
+        setError(data.error)
       } else {
-        this.setState({error: '', redirect: true})
+        setError('')
+        setRedirect(true)
       }
     })
   }
 
-  render() {
-    if (this.state.redirect) {
+    if (redirect) {
       return (<Redirect to={'/user/'+auth.isAuthenticated().user._id}/>)
     }
-    const {classes} = this.props
     return (
-      <GameForm gameId={this.match.params.gameId} onSubmit={this.clickSubmit} errorMsg={this.state.error}/>
+      <GameForm gameId={match.params.gameId} onSubmit={clickSubmit} errorMsg={error}/>
     )
-  }
+
 }
 
-export default EditGame
