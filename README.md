@@ -1,4 +1,5 @@
-# MERN VR Game
+# MERN VR Game 2.0
+- *Looking for the first edition code? [Check here](https://github.com/shamahoque/mern-vrgame/tree/master)*
 
 A web-based game application with VR features - developed using React, React 360, Node, Express and MongoDB. 
 
